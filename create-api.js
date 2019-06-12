@@ -1,9 +1,8 @@
-const events = require('./endpoints/events');
-
 module.exports = function createApi(http){
 
-    const eventsApi = events(http);
+    const events = require('./endpoints/events')(http);
+    const auth = require('./endpoints/auth')(http);
 
-    return {...eventsApi};
+    return {...events, ...auth};
 
 }
