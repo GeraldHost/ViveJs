@@ -3,7 +3,7 @@ module.exports = function auth(http){
     function login({email, pass}){
         return http.post('/auth/login', {
             email, pass
-        }).then(resp => resp)
+        }).then(resp => resp.data)
         .catch(http.handleError);
     }
 
