@@ -10,7 +10,7 @@ module.exports = function auth(http){
     function register({email, pass}){
         return http.post('/auth/register', {
             email, pass
-        }).then(resp => resp)
+        }).then(resp => resp.data)
         .catch(http.handleError);
     }
 
