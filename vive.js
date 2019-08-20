@@ -8,8 +8,15 @@ exports.createClient = function (config = {}) {
     });
 
     let access_token = config.access_token;
-    if (access_token) {
+    if (!access_token) {
+        throw Error('Please supply and access token.');
+    }
+
+    let auth_type = config.auth_type || 'public'
+    if (auth_type === 'standard') {
         http.defaults.headers.common['Authorization'] = access_token;
+    } else if (auth_type === 'api') {
+        http.defaults.params = { api: access_token };
     }
 
     http.prototype.handleError = (error) => 
