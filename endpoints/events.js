@@ -12,13 +12,22 @@ module.exports = function events(http) {
             .catch(http.handleError);
     }
 
-    function createEvent() { }
+    function createEvent(data) { 
+        return http.post('/events', data)
+            .then(resp => resp.data)
+            .catch(http.handleError);
+    }
 
-    function deleteEvent() { }
+    function deleteEvent(event_id) { 
+        return http.delete(`events/${event_id}`)
+            .then((resp) => resp.data)
+            .catch(http.handleError);
+    }
 
     function deleteTicketType(event_id, ticket_type_id) {
         return http.delete(`events/${event_id}/ticket_types`, {data: [ticket_type_id]})
-            .then((resp) => resp.data);
+            .then((resp) => resp.data)
+            .catch(http.handleError);
     }
 
     return {
