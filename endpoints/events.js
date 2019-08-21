@@ -1,4 +1,4 @@
-module.exports = function events(http) {
+export default function events(http) {
 
     function getEvents() {
         return http.get('/events')

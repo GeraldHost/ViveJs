@@ -1,9 +1,7 @@
-module.exports = function createApi(http){
+import events from './endpoints/events';
+import auth from './endpoints/auth';
+import users from './endpoints/users';
 
-    const events = require('./endpoints/events')(http);
-    const auth = require('./endpoints/auth')(http);
-    const users = require('./endpoints/users')(http);
-
-    return {...events, ...auth, ...users};
-
+export default function createApi(http){
+    return {...events(http), ...auth(http), ...users(http)};
 }

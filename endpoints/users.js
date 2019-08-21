@@ -1,4 +1,4 @@
-module.exports = function users(http){
+export default function users(http){
 
     function getCurrentUser(){
         return http.get('/users/current')
