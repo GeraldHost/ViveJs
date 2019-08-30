@@ -3,8 +3,10 @@ const conf = require('./config');
 const createApi = require('./create-api');
 
 exports.createClient = function (config = {}) {
+    const baseURL = config.api_base_url || conf.API_BASE_URL;
+    
     const http = axios.create({
-        baseURL: conf.API_BASE_URL,
+        baseURL,
     });
 
     let access_token = config.access_token;
