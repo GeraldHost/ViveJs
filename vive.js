@@ -2,9 +2,11 @@ import axios from 'axios';
 import conf from './config';
 import createApi from './create-api';
 
-export default function createClient(config = {}) {
+exports.createClient = function (config = {}) {
+    const baseURL = config.api_base_url || conf.API_BASE_URL;
+    
     const http = axios.create({
-        baseURL: conf.API_BASE_URL,
+        baseURL,
         validateStatus: function (status) {
             return status >= 200 && status < 500; // default
         }
