@@ -5,6 +5,9 @@ import createApi from './create-api';
 export default function createClient(config = {}) {
     const http = axios.create({
         baseURL: conf.API_BASE_URL,
+        validateStatus: function (status) {
+            return status >= 200 && status < 500; // default
+        }
     });
 
     let access_token = config.access_token;
