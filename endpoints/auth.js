@@ -1,4 +1,4 @@
-module.exports = function auth(http){
+export default function auth(http){
 
     function login({email, pass}){
         return http.post('/auth/login', {

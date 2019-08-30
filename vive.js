@@ -1,6 +1,6 @@
-const axios = require('axios');
-const conf = require('./config');
-const createApi = require('./create-api');
+import axios from 'axios';
+import conf from './config';
+import createApi from './create-api';
 
 exports.createClient = function (config = {}) {
     const baseURL = config.api_base_url || conf.API_BASE_URL;
