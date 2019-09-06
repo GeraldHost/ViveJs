@@ -7,6 +7,9 @@ exports.createClient = function (config = {}) {
     
     const http = axios.create({
         baseURL,
+        validateStatus: function (status) {
+            return status >= 200 && status < 500; // default
+        }
     });
 
     let access_token = config.access_token;
