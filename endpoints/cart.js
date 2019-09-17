@@ -8,10 +8,10 @@ export default function cart(http) {
 
   function createCart() {
     return http
-      .get(`/cart`)
+      .post(`/cart`)
       .then(resp => resp.data)
       .catch(http.handleError);
-  }
+  } 
 
   function addItemToCart(id, item) {
     return http
@@ -29,7 +29,7 @@ export default function cart(http) {
 
   function removeCartItem(id, itemId){
     return http
-      .put(`/cart/${id}/items`, { item: { id: itemId } })
+      .delete(`/cart/${id}/items`, { item: { id: itemId } })
       .then(resp => resp.data)
       .catch(http.handleError);
   }
