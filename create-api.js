@@ -1,8 +1,17 @@
-import events from "./endpoints/events";
-import auth from "./endpoints/auth";
-import users from "./endpoints/users";
-import cart from "./endpoints/cart";
+import createEntity from "./lib/entity";
+import authService from "./lib/auth";
 
 export default function createApi(http) {
-  return { ...events(http), ...auth(http), ...users(http), ...cart(http) };
+  const request = (method, path, data = {}) =>
+    http[method](path, data)
+      .then(resp => resp.data)
+      .catch(http.handleError);
+
+  return Object.assign(
+    {},
+    {
+      entity: createEntity(request),
+      auth: authService(request),
+    }
+  );
 }
