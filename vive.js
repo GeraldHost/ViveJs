@@ -2,7 +2,7 @@ import axios from 'axios';
 import conf from './config';
 import createApi from './create-api';
 
-exports.createClient = function (config = {}) {
+export const createClient = (config = {}) => {
     const baseURL = config.api_base_url || conf.API_BASE_URL;
     
     const http = axios.create({
