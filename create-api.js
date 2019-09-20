@@ -1,5 +1,4 @@
-import createEntity from "./lib/entity";
-import authService from "./lib/auth";
+import { createEntity, authService, createCheckout } from "./lib";
 
 export default function createApi(http) {
   const request = (method, path, data = {}) =>
@@ -12,6 +11,7 @@ export default function createApi(http) {
     {
       entity: createEntity(request),
       auth: authService(request),
+      checkout: createCheckout(request),
     }
   );
 }
