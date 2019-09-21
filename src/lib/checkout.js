@@ -44,8 +44,9 @@ const createCheckout = request => {
   const createSubmit = onSuccess => {
     return event => {
       event.preventDefault();
-      let values = serialize(event.target);
-      request("post", "/sales/intent", values).then(resp => {
+      let [name, email] = serialize(event.target);
+      let sale = { ...name, ...email };
+      request("post", "/sales/intent", sale).then(resp => {
         onSuccess(resp);
       });
     };
