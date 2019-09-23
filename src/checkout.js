@@ -1,5 +1,7 @@
-const checkout = request => {
+import { serialize } from "./util";
+import cartHelper from "./lib/cart";
 
+const checkout = ({ request, entity }) => {
   const stripe = Stripe("pk_test_TYooMQauvdEDq54NiTphI7jx");
   const formInputs = [
     { el: "input", name: "email" },
@@ -55,6 +57,7 @@ const checkout = request => {
     {},
     {
       initForm,
+      cart: cartHelper(entity("cart")),
     }
   );
 };
