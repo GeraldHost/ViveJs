@@ -1,21 +1,21 @@
-const CART_KEY = "vive:cart";
+export const CART_KEY = "vive:cart";
 
 const cartHelper = cart => {
+  const localSaveCart = resp => {
+    localStorage.setItem(CART_KEY, JSON.stringify(resp.data));
+    return resp;
+  };
+  
   const get = () => {
     let cartObj = JSON.parse(localStorage.getItem(CART_KEY));
     if (cartObj && typeof cartObj === "object") {
       cart
         .single(cartObj.id)
         .get()
-        .then(resp =>
-          localStorage.setItem(CART_KEY, JSON.stringify(resp.data))
-        );
+        .then(localSaveCart);
       return new Promise(resolve => resolve(cartObj));
     }
-    return cart.create().then(resp => {
-      localStorage.setItem(CART_KEY, JSON.stringify(resp.data));
-      return resp.data;
-    });
+    return cart.create().then(localSaveCart);
   };
 
   const addItem = async item => {
@@ -24,10 +24,7 @@ const cartHelper = cart => {
       .single(cart_id)
       .entity("items")
       .create(item)
-      .then(resp => {
-        localStorage.setItem(CART_KEY, JSON.stringify(resp.data));
-        return resp;
-      });
+      .then(localSaveCart);
   };
 
   const removeItem = async id => {
@@ -35,8 +32,8 @@ const cartHelper = cart => {
     return cart
       .single(cart_id)
       .entity("items")
-      .delete(id);
-      // TODO: update state
+      .delete(id)
+      .then(localSaveCart);
   };
 
   const updateItem = async (id, data) => {
@@ -44,8 +41,8 @@ const cartHelper = cart => {
     return cart
       .single(cart_id)
       .entity("items")
-      .update(id, data);
-      // TODO: update state
+      .update(id, data)
+      .then(localSaveCart);
   };
 
   return Object.assign(
