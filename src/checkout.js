@@ -1,25 +1,39 @@
 import { serialize } from "./util";
-import cartHelper from "./lib/cart";
+import cartHelper, { CART_KEY } from "./lib/cart";
 
 const checkout = ({ request, entity }) => {
-  const stripe = Stripe("pk_test_TYooMQauvdEDq54NiTphI7jx");
+  const stripe = Stripe("pk_test_ajbou6OcKg1QmuRvavRtpgzd");
+  const elements = stripe.elements();
+  const cardElement = elements.create("card");
+
   const formInputs = [
-    { el: "input", name: "email" },
-    { el: "input", name: "postcode" },
+    { el: "input", name: "email", value: "me@jacobford.co.uk" },
+    { el: "input", name: "name", value: "Jacob" },
   ];
 
   const initForm = (container, onSuccess) => {
-    let form = buildForm();
-    form.addEventListener("submit", createSubmit(onSuccess));
-    container.appendChild(form);
+    const { id: cart_id } = JSON.parse(localStorage.getItem(CART_KEY));
+    request("post", "/sales/intent", { cart_id }).then(resp => {
+      if (resp.data.intent.id) {
+        formInputs.push({
+          el: "input",
+          name: "charge_secret",
+          value: resp.data.intent.client_secret,
+        });
+      }
+      let form = buildForm();
+      form.addEventListener("submit", createSubmit(onSuccess));
+      container.appendChild(form);
+    });
   };
 
   const buildForm = () => {
     let form = document.createElement("form");
-    formInputs.forEach(({ name, el, type = "text" }) => {
+    formInputs.forEach(({ name, el, value = "", type = "text" }) => {
       let input = document.createElement(el);
       input.name = name;
       input.type = type;
+      input.value = value;
       form.appendChild(input);
     });
     mountCard(form);
@@ -29,10 +43,8 @@ const checkout = ({ request, entity }) => {
 
   const mountCard = form => {
     let cardEl = document.createElement("div");
-    let elements = stripe.elements();
-    let card = elements.create("card");
     form.appendChild(cardEl);
-    card.mount(cardEl);
+    cardElement.mount(cardEl);
   };
 
   const getSubmitButton = () => {
@@ -45,11 +57,27 @@ const checkout = ({ request, entity }) => {
   const createSubmit = onSuccess => {
     return event => {
       event.preventDefault();
-      let [name, email] = serialize(event.target);
-      let sale = { ...name, ...email };
-      request("post", "/sales/intent", sale).then(resp => {
-        onSuccess(resp);
-      });
+      let { name, email, charge_secret } = serialize(event.target);
+      let { id: cart_id } = JSON.parse(localStorage.getItem(CART_KEY));
+      stripe
+        .handleCardPayment(charge_secret, cardElement, {
+          payment_method_data: {
+            billing_details: { name, email },
+            metadata: { cart_id },
+          },
+        })
+        .then(function(result) {
+          if (result.error) {
+            // Display error.message in your UI.
+            onSuccess(result);
+            console.log(result);
+            alert("Error");
+          } else {
+            // The payment has succeeded. Display a success message.
+            console.log(result);
+            alert("success");
+          }
+        });
     };
   };
 
