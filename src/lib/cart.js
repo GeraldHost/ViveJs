@@ -1,13 +1,26 @@
 export const CART_KEY = "vive:cart";
 
-const cartHelper = cart => {
-  const localSaveCart = resp => {
+export const localSaveCart = resp => {
+  if(!resp.errors) {
     localStorage.setItem(CART_KEY, JSON.stringify(resp.data));
-    return resp;
-  };
-  
+  }
+  return resp;
+};
+
+export const localGetCart = () => {
+  let cart;
+  try {
+    cart = JSON.parse(localStorage.getItem(CART_KEY) || "false");
+  } catch(e) {
+    cart = false;
+  }
+  return cart;
+}
+
+const cartHelper = cart => {
+
   const get = () => {
-    let cartObj = JSON.parse(localStorage.getItem(CART_KEY));
+    let cartObj = localGetCart();
     if (cartObj && typeof cartObj === "object") {
       cart
         .single(cartObj.id)
